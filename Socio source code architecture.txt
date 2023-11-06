@@ -1,0 +1,13 @@
+Socio source code architecture
+
+_auth folder contains public components like signin and signup pages which will be shown first time to user when he visits the site.
+
+_root folder contains private components like Home page which will be shown once the user signs in.
+
+component folder contains components added through shadcn UI.
+
+lib/index.ts contains schemas using zod for form pages
+
+_root/index.ts is used so that all the components can be imported in one single line like { x , y , z}
+
+
