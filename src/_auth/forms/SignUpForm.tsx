@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { signUpFormSchema } from '@/lib'
+import { signUpFormSchema } from '@/lib/validations/'
 import * as z from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -7,6 +7,9 @@ import { Input } from '@/components/ui/input'
 import {
   Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage,
 } from "@/components/ui/form";
+import Loader from '@/components/shared/Loader'
+import { Link } from 'react-router-dom'
+import { createUserAccount } from '@/lib/appwrite/api'
 
 const SignUpForm = () => {
   const form = useForm<z.infer<typeof signUpFormSchema>>({
@@ -18,11 +21,12 @@ const SignUpForm = () => {
       password: ""
     },
   })
-  function onSubmit(values: z.infer<typeof signUpFormSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values)
+  async function onSubmit(values: z.infer<typeof signUpFormSchema>) {
+    const newUser = await createUserAccount(values)
+    console.log(newUser)
   }
+
+  const isLoading = false;
   return (
 
     <Form {...form}>
@@ -31,7 +35,7 @@ const SignUpForm = () => {
         <h2 className='h3-bold md:h2-bold pt-5 sm:pt-12'>Create a new account</h2>
         <p className='text-light-3 small-medium md:base-regular mt-2'>To use Socio enter your details</p>
         <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4 w-full mt-4">
-        <FormField
+          <FormField
             control={form.control}
             name="name"
             render={({ field }) => (
@@ -57,7 +61,7 @@ const SignUpForm = () => {
               </FormItem>
             )}
           />
-          <FormField 
+          <FormField
             control={form.control}
             name="username"
             render={({ field }) => (
@@ -81,11 +85,14 @@ const SignUpForm = () => {
                 <FormControl>
                   <Input type='password' className='shad-input' {...field} />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className='text-light-3' />
               </FormItem>
             )}
           />
-          <Button type="submit" className='shad-button_primary'>Submit</Button>
+          <Button type="submit" className='shad-button_primary'>
+            {isLoading ? <div className='flex-center gap-2'><Loader /> Loading...</div> : <>Submit</>}
+          </Button>
+          <p className='text-small-regular text-light-2 text-center mt-2'>Already have an account? <Link className='text-primary-500 text-small-semibold' to={'/signIn'}>Log in</Link></p>
         </form>
       </div>
 
